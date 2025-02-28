@@ -1,7 +1,20 @@
 import { useDispatch } from "react-redux";
-import { addItem, minusItem, removeItem } from "../redux/slices/cartSlice";
+import React from "react";
+import classNames from "classnames";
+import { addItem, minusItem, removeItem } from "../redux/cart/slice";
+import { CartItem } from "../redux/cart/types";
 
-export default function CartItem({
+type CartItemProps = {
+  id: string;
+  title: string;
+  price: number;
+  imageUrl: string;
+  type: string;
+  count: number;
+  size: number;
+};
+
+const CartItemBlock: React.FC<CartItemProps> = ({
   id,
   title,
   price,
@@ -9,11 +22,11 @@ export default function CartItem({
   type,
   count,
   size,
-}) {
+}) => {
   const dispatch = useDispatch();
 
   const onClickPlus = () => {
-    dispatch(addItem({ id }));
+    dispatch(addItem({ id } as CartItem));
   };
 
   const onClickMinus = () => {
@@ -38,9 +51,15 @@ export default function CartItem({
         </p>
       </div>
       <div className="cart__item-count">
-        <div
+        <button
+          disabled={count === 1}
           onClick={onClickMinus}
-          className="button button--outline button--circle cart__item-count-minus"
+          className={classNames(
+            "button button--outline button--circle  cart__item-count-minus",
+            {
+              "cart__item-count-minus--disabled": count === 1,
+            }
+          )}
         >
           <svg
             width="10"
@@ -58,9 +77,9 @@ export default function CartItem({
               fill="#EB5A1E"
             />
           </svg>
-        </div>
+        </button>
         <b>{count}</b>
-        <div
+        <button
           onClick={onClickPlus}
           className="button button--outline button--circle cart__item-count-plus"
         >
@@ -80,7 +99,7 @@ export default function CartItem({
               fill="#EB5A1E"
             />
           </svg>
-        </div>
+        </button>
       </div>
       <div className="cart__item-price">
         <b>{price * count} ₽</b>
@@ -107,4 +126,6 @@ export default function CartItem({
       </div>
     </div>
   );
-}
+};
+
+export default CartItemBlock;
